@@ -1,5 +1,4 @@
 
-
 // generate an echarts instance
 let dom = document.getElementById('container');
 let myChart = echarts.init(dom);
