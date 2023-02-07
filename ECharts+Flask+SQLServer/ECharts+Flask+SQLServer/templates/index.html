@@ -1,0 +1,24 @@
+
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8">
+        <title>ECharts Page</title>
+        <meta name="author" content="Frances.Baihui.Jiang">
+        <meta name="email" content="frances.bh.jiang@gmail.com">
+        <meta name="description" content="This is a Page routed by Flask framework of Python">
+        <script src="../static/js/jquery-3.3.1.min.js"></script>
+        <script src="{{ url_for('static', filename='js/echarts.min.js') }}"></script>
+    </head>
+
+    <body>
+        <!-- A DOM for ECharts graph-->
+        <div id="container" style="width: 600px; height: 400px;"></div>
+        <script src="{{ url_for('static', filename='js/renderBarChart.js')}}" type="text/javascript"></script>
+    </body>
+
+    <footer>
+        <hr/>
+        <p>©Copyright 2023 by <a href="https://github.com/MySummertime" target="_blank">Frances Jiang</a>. All rights reversed.</p>
+    </footer>
+</html>
