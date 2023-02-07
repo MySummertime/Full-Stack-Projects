@@ -1,5 +1,4 @@
 
-
 jQuery(document).ready(() => {
     getChart();
     console.log('Static chart rendered successfully!')

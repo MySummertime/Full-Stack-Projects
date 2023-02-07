@@ -1,6 +1,5 @@
 
 from .dbops import fetchData
-from flask import jsonify
 import os, json
 
 

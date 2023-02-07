@@ -8,6 +8,7 @@ import os
 dir = os.path.dirname(__file__)
 dir = os.path.join(dir, 'db_info.txt')
 
+
 # Read from .txt to pandas.DataFrame
 df = pd.read_csv(dir, encoding = 'utf-8', engine = 'python', header = None, sep = '\t')
 # print(df)

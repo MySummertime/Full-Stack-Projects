@@ -3,7 +3,7 @@
 const dom = document.getElementById("container");
 let myChart = echarts.init(dom);
 
-// ---------------------------------------functions----------------------------------------------
+// ---------------------------------------functions--------------------------------------------
 
 function initChart() {
     myChart.showLoading();
