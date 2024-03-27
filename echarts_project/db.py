@@ -1,7 +1,9 @@
 # db.py
 import os
+from contextlib import closing
 
 import pymysql
+from pymysql.cursors import DictCursor
 
 
 class DatabaseConnector:
@@ -10,65 +12,49 @@ class DatabaseConnector:
     Modify the db_config dictionary with your actual database configuration.
     """
 
-    _instance = None
+    _shared_state = {}
 
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(DatabaseConnector, cls).__new__(cls)
-            cls._instance._connection = None
-        return cls._instance
-
-    def connect(self):
-        if self._connection is None:
-            db_config = {
+    def __init__(self):
+        self.__dict__ = self._shared_state
+        if not hasattr(self, "_connection"):
+            self._connection = None
+            self._config = {
                 "host": os.environ.get("DB_HOST", "localhost"),
                 "user": os.environ.get("DB_USER", "root"),
                 "password": os.environ.get("DB_PASSWORD", ""),
                 "database": os.environ.get("DB_NAME", ""),
             }
-            try:
-                self._connection = pymysql.connect(**db_config)
-            except pymysql.Error as e:
-                print("Error connecting to database: {}".format(e))
-                return None
+
+    def connect(self):
+        try:
+            self._connection = pymysql.connect(**self._config)
+        except pymysql.Error as e:
+            print("Error connecting to database: {}".format(e))
+            return None
         return self._connection
 
-    def close(self):
-        if self._connection is not None:
-            self._connection.close()
+    def execute_query(self, sql, params=None):
+        """
+        Executes the provided SQL query and returns the result.
+        """
+        with closing(self._connection.cursor(DictCursor)) as cursor:
+            cursor.execute(sql, params)
+            return cursor.fetchall()
 
-
-db_connector = DatabaseConnector()
+    def commit_query(self, sql, params=None):
+        """
+        Executes the provided SQL query and commits the transaction.
+        """
+        with closing(self._connection.cursor()) as cursor:
+            cursor.execute(sql, params)
+        self._connection.commit()  # commit transaction
 
 
 def execute_query(sql, params=None):
-    """
-    Executes the provided SQL query and returns the result.
-    """
-    connection = db_connector.connect()
-    if connection:
-        try:
-            with connection.cursor(pymysql.cursors.DictCursor) as cursor:
-                cursor.execute(sql, params)
-                result = cursor.fetchall()
-                return result
-        finally:
-            connection.close()
-    else:
-        return None
+    db_connector = DatabaseConnector()
+    return db_connector.execute_query(sql, params)
 
 
 def commit_query(sql, params=None):
-    """
-    Executes the provided SQL query and commits the transaction.
-    """
-    connection = db_connector.connect()
-    if connection:
-        try:
-            with connection.cursor() as cursor:
-                cursor.execute(sql, params)
-            connection.commit()  # commit transaction
-        finally:
-            connection.close()
-    else:
-        return None
+    db_connector = DatabaseConnector()
+    db_connector.commit_query(sql, params)
