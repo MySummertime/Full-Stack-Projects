@@ -1,0 +1,10 @@
+#myChart {
+	width: 800px;
+	height: 600px;
+}
+
+#errorMessage {
+	color: red;
+	font-weight: bold;
+	display: none; /* Initially hidden */
+}
